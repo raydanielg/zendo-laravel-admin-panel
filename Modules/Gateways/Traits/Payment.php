@@ -67,6 +67,12 @@ trait Payment
             return url("payment/bkash/make-payment/?payment_id={$payment->id}");
         }else if($payment->payment_method == 'paystack'){
             return url("payment/paystack/pay/?payment_id={$payment->id}");
+        }else if($payment->payment_method == 'zenopay'){
+            return url("payment/zenopay/pay/?payment_id={$payment->id}");
+        }else if($payment->payment_method == 'pesapal'){
+            return url("payment/pesapal/pay/?payment_id={$payment->id}");
+        }else if($payment->payment_method == 'seclome'){
+            return url("payment/selcom/pay/?payment_id={$payment->id}");
         }
         return false;
     }

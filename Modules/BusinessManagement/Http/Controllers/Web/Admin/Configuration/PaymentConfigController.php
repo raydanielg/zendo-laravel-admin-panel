@@ -35,15 +35,15 @@ class PaymentConfigController extends BaseController
     {
         $this->ensureDefaultGatewayExists(
             key: 'zenopay',
-            keys: ['gateway', 'mode', 'status', 'account_id', 'api_secret'],
+            keys: ['gateway', 'mode', 'status', 'account_id', 'api_secret', 'base_url'],
         );
         $this->ensureDefaultGatewayExists(
             key: 'pesapal',
-            keys: ['gateway', 'mode', 'status', 'consumer_key', 'consumer_secret'],
+            keys: ['gateway', 'mode', 'status', 'consumer_key', 'consumer_secret', 'ipn_id', 'country_code'],
         );
         $this->ensureDefaultGatewayExists(
             key: 'seclome',
-            keys: ['gateway', 'mode', 'status', 'client_id', 'client_secret'],
+            keys: ['gateway', 'mode', 'status', 'vendor', 'api_key', 'api_secret', 'base_url'],
         );
 
         $dataValues = $this->settingService->getBy(criteria: ['settings_type' => PAYMENT_CONFIG]);
@@ -61,12 +61,41 @@ class PaymentConfigController extends BaseController
 
     private function ensureDefaultGatewayExists(string $key, array $keys): void
     {
-        $exists = Setting::query()
+        $existing = Setting::query()
             ->where('settings_type', PAYMENT_CONFIG)
             ->where('key_name', $key)
-            ->exists();
+            ->first();
 
-        if ($exists) {
+        if ($existing) {
+            $live = is_array($existing->live_values) ? $existing->live_values : [];
+            $test = is_array($existing->test_values) ? $existing->test_values : [];
+
+            $updated = false;
+            foreach ($keys as $k) {
+                if (!array_key_exists($k, $live)) {
+                    $live[$k] = '';
+                    $updated = true;
+                }
+                if (!array_key_exists($k, $test)) {
+                    $test[$k] = '';
+                    $updated = true;
+                }
+            }
+            if (!array_key_exists('gateway', $live)) {
+                $live['gateway'] = $key;
+                $updated = true;
+            }
+            if (!array_key_exists('gateway', $test)) {
+                $test['gateway'] = $key;
+                $updated = true;
+            }
+
+            if ($updated) {
+                $existing->update([
+                    'live_values' => $live,
+                    'test_values' => $test,
+                ]);
+            }
             return;
         }
 

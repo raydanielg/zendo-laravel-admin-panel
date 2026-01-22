@@ -28,6 +28,9 @@ use Modules\Gateways\Http\Controllers\RazorPayController;
 use Modules\Gateways\Http\Controllers\SenangPayController;
 use Modules\Gateways\Http\Controllers\SslCommerzPaymentController;
 use Modules\Gateways\Http\Controllers\StripePaymentController;
+use Modules\Gateways\Http\Controllers\ZenopayController;
+use Modules\Gateways\Http\Controllers\PesapalController;
+use Modules\Gateways\Http\Controllers\SelcomController;
 
 /*
 
@@ -142,5 +145,29 @@ Route::group(['prefix' => 'payment'], function () {
         ->withoutMiddleware([VerifyCsrfToken::class]);
         Route::any('callback', [PvitController::class,'callBack'])->name('callBack')
         ->withoutMiddleware([VerifyCsrfToken::class]);
+    });
+
+    //ZENOPAY
+    Route::group(['prefix' => 'zenopay', 'as' => 'zenopay.'], function () {
+        Route::get('pay', [ZenopayController::class, 'pay'])->name('pay');
+        Route::get('status', [ZenopayController::class, 'status'])->name('status');
+        Route::post('webhook', [ZenopayController::class, 'webhook'])->name('webhook')
+            ->withoutMiddleware([VerifyCsrfToken::class]);
+    });
+
+    //PESAPAL
+    Route::group(['prefix' => 'pesapal', 'as' => 'pesapal.'], function () {
+        Route::get('pay', [PesapalController::class, 'pay'])->name('pay');
+        Route::get('callback', [PesapalController::class, 'callback'])->name('callback');
+        Route::any('ipn', [PesapalController::class, 'ipn'])->name('ipn')
+            ->withoutMiddleware([VerifyCsrfToken::class]);
+    });
+
+    //SELCOM (SECLoME)
+    Route::group(['prefix' => 'selcom', 'as' => 'selcom.'], function () {
+        Route::get('pay', [SelcomController::class, 'pay'])->name('pay');
+        Route::any('callback', [SelcomController::class, 'callback'])->name('callback');
+        Route::any('webhook', [SelcomController::class, 'webhook'])->name('webhook')
+            ->withoutMiddleware([VerifyCsrfToken::class]);
     });
 });

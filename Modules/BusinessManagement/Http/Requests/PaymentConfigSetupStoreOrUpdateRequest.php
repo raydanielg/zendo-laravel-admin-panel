@@ -81,14 +81,24 @@ class PaymentConfigSetupStoreOrUpdateRequest extends FormRequest
                     return ($this->input('status') == 1 && $this->input('gateway') == 'pesapal');
                 })
             ],
+            'ipn_id' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'pesapal');
+                })
+            ],
 
             #seclome
-            'client_id' => [
+            'vendor' => [
                 Rule::requiredIf(function () {
                     return ($this->input('status') == 1 && $this->input('gateway') == 'seclome');
                 })
             ],
-            'client_secret' => [
+            'api_key' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'seclome');
+                })
+            ],
+            'api_secret' => [
                 Rule::requiredIf(function () {
                     return ($this->input('status') == 1 && $this->input('gateway') == 'seclome');
                 })

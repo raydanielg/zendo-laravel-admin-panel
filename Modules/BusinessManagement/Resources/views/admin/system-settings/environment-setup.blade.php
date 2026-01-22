@@ -135,27 +135,6 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6 col-12">
-                                    <div class="form-group mb-4">
-                                        <label
-                                            class="title-color d-flex mb-2">{{translate('BUYER_USERNAME')}}</label>
-
-                                        <input type="text" value="{{ env('BUYER_USERNAME') }}" class="form-control"
-                                               disabled tabindex="11">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-12">
-                                    <div class="form-group" id="purchase_code_div">
-                                        <label
-                                            class="title-color d-flex mb-2">{{translate('PURCHASE_CODE')}}</label>
-                                        <div class="input-icons">
-                                            <input type="password" value="{{ env('PURCHASE_CODE') }}"
-                                                   class="form-control" id="purchase_code" disabled tabindex="12">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="d-flex align-items-center justify-content-end flex-wrap gap-10">
                                 <button type="submit" class="btn btn-primary px-4" tabindex="13">{{translate('submit')}}</button>
                             </div>

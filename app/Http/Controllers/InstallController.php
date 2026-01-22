@@ -51,30 +51,7 @@ class InstallController extends Controller
 
     public function step1(Request $request): View|Factory|RedirectResponse|Application
     {
-        if (Hash::check('step_1', $request['token'])) {
-            //extensions
-            $permission['curl'] = function_exists('curl_version');
-            $permission['bcmath'] = extension_loaded('bcmath');
-            $permission['ctype'] = extension_loaded('ctype');
-            $permission['json'] = extension_loaded('json');
-            $permission['mbstring'] = extension_loaded('mbstring');
-            $permission['openssl'] = extension_loaded('openssl');
-            $permission['pdo'] = defined('PDO::ATTR_DRIVER_NAME');
-            $permission['tokenizer'] = extension_loaded('tokenizer');
-            $permission['xml'] = extension_loaded('xml');
-            $permission['zip'] = extension_loaded('zip');
-            $permission['fileinfo'] = extension_loaded('fileinfo');
-            $permission['gd'] = extension_loaded('gd');
-            $permission['sodium'] = extension_loaded('sodium');
-
-            //file permissions
-            $permission['module_file_permission'] = is_writable(base_path('modules_statuses.json'));
-            $permission['env_file_write_perm'] = is_writable(base_path('.env'));
-            $permission['routes_file_write_perm'] = is_writable(base_path('app/Providers/RouteServiceProvider.php'));
-            return view('installation.step1', compact('permission'));
-        }
-        session()->flash('error', 'Access denied!');
-        return redirect()->route('step0');
+        return redirect()->route('step3', ['token' => bcrypt('step_3')]);
     }
 
     public function step2(Request $request): View|Factory|RedirectResponse|Application
@@ -243,7 +220,7 @@ Parcel ID is {ParcelId} You can track this parcel from this link {TrackingLink}"
             // Remove www.
             $url = preg_replace('/^www\./', '', $url);
             $key = base64_encode(random_bytes(32));
-            $output = 'APP_NAME=DriveMond' . time() . '
+            $output = 'APP_NAME=Zendo' . time() . '
                     APP_ENV=live
                     APP_MODE=live
                     APP_KEY=base64:' . $key . '

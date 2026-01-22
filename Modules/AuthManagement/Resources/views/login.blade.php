@@ -79,7 +79,6 @@
                                         dynamicAsset('public/assets/admin-module/img/logo.png'),
                                         'business/',
                                     ) }}" alt="Logo">
-                            <span class="badge badge-success fz-12 opacity-75">{{ translate('Software_Version') }} : {{ env('SOFTWARE_VERSION') }}</span>
                         </div>
 
                         <div class="mb-4">
@@ -114,55 +113,12 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-4">
-                                    <div>
-                                        @php($recaptcha = businessConfig('recaptcha')?->value)
-                                        @if(isset($recaptcha) && $recaptcha['status'] == 1)
-                                            <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
-
-                                            <input type="hidden" name="set_default_captcha" id="set_default_captcha_value" value="0">
-
-                                            <div class="row d-none" id="reload-captcha">
-                                                <div class="col-6 pr-0">
-                                                    <input type="text" class="form-control form-control-lg border-none"
-                                                           name="default_captcha_value" value=""
-                                                           placeholder="{{translate('Enter captcha')}}" autocomplete="off">
-                                                </div>
-                                                <div class="col-6 input-icons bg-white rounded cursor-pointer"
-                                                     data-toggle="tooltip" data-placement="right"
-                                                     title="{{translate('Click to refresh')}}">
-                                                    <a class="refresh-recaptcha">
-                                                        <img src="{{ URL('/admin/auth/code/captcha/1') }}"
-                                                             class="input-field h-75 rounded-10 border-bottom-0 width-90-percent"
-                                                             id="default_recaptcha_id" alt="{{ translate('recaptcha') }}">
-                                                        <i class="tio-refresh icon"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        @else
-                                            <div class="row p-2">
-                                                <div class="col-6 pr-0">
-                                                    <input type="text" class="form-control form-control-lg border-none"
-                                                           name="default_captcha_value" value=""
-                                                           placeholder="{{translate('Enter captcha')}}" autocomplete="off">
-                                                </div>
-                                                <div class="col-6 input-icons bg-white rounded cursor-pointer"
-                                                     data-toggle="tooltip" data-placement="right"
-                                                     title="{{translate('Click to refresh')}}">
-                                                    <a class="refresh-recaptcha">
-                                                        <img src="{{ URL('/admin/auth/code/captcha/1') }}"
-                                                             class="input-field h-75 rounded-10 border-bottom-0 width-90-percent"
-                                                             id="default_recaptcha_id" alt="{{ translate('recaptcha') }}">
-                                                        <i class="tio-refresh icon"></i>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <button class="btn btn-primary radius-50 text-capitalize fw-semibold w-100 justify-content-center h-45 align-items-center"
-                                        id="signInBtn" type="submit">{{ translate('sign_in') }}</button>
+                                <button class="btn radius-50 text-capitalize fw-semibold w-100 justify-content-center h-45 align-items-center text-white"
+                                        style="background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 1) 0%, rgba(92, 143, 252, 1) 100%); border: 0;"
+                                        id="signInBtn" type="submit">
+                                    <span id="signInBtnText">{{ translate('sign_in') }}</span>
+                                    <span id="signInBtnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                                </button>
                             </div>
                         </div>
 
@@ -182,7 +138,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-7 d-none d-lg-flex align-items-center" style="background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 1) 0%, rgba(92, 143, 252, 1) 100%);">
+                <div class="col-lg-7 d-none d-lg-flex align-items-center" style="background-image: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.95) 0%, rgba(92, 143, 252, 0.95) 100%), url('{{ dynamicAsset('public/assets/admin-module/img/media/login-bg.png') }}'); background-size: cover; background-position: center;">
                     <div class="p-5 w-100">
                         <div class="text-white" style="max-width: 620px;">
                             <div class="fw-semibold opacity-75 mb-3">{{ businessConfig('business_name')->value ?? 'Zendo' }}</div>
@@ -214,7 +170,6 @@
 <script src="{{ dynamicAsset('public/assets/admin-module/js/main.js') }}"></script>
 <script src="{{ dynamicAsset('public/assets/admin-module/js/toastr.js') }}"></script>
 <script src="{{ dynamicAsset('public/assets/admin-module/js/login.js') }}"></script>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <!-- ======= BEGIN GLOBAL MANDATORY SCRIPTS ======= -->
 
@@ -246,59 +201,10 @@
         @endforeach
     </script>
 @endif
-@if(isset($recaptcha) && $recaptcha['status'] == 1)
-    <script src="https://www.google.com/recaptcha/api.js?render={{$recaptcha['site_key']}}"></script>
-    <script>
-        $(document).ready(function () {
-            $('#signInBtn').click(function (e) {
-
-                if ($('#set_default_captcha_value').val() == 1) {
-                    $('#login-form').submit();
-                    return true;
-                }
-
-                e.preventDefault();
-
-                if (typeof grecaptcha === 'undefined') {
-                    toastr.error('Invalid recaptcha key provided. Please check the recaptcha configuration.');
-
-                    $('#reload-captcha').removeClass('d-none');
-                    $('#set_default_captcha_value').val('1');
-
-                    return;
-                }
-
-                grecaptcha.ready(function () {
-                    grecaptcha.execute('{{$recaptcha['site_key']}}', {action: 'submit'}).then(function (token) {
-                        $('#g-recaptcha-response').value = token;
-                        $('#login-form').submit();
-                    });
-                });
-
-                window.onerror = function (message) {
-                    var errorMessage = 'An unexpected error occurred. Please check the recaptcha configuration';
-                    if (message.includes('Invalid site key')) {
-                        errorMessage = 'Invalid site key provided. Please check the recaptcha configuration.';
-                    } else if (message.includes('not loaded in api.js')) {
-                        errorMessage = 'reCAPTCHA API could not be loaded. Please check the recaptcha API configuration.';
-                    }
-
-                    $('#reload-captcha').removeClass('d-none');
-                    $('#set_default_captcha_value').val('1');
-
-                    toastr.error(errorMessage)
-                    return true;
-                };
-            });
-        });
-
-    </script>
-
-@endif
 <script type="text/javascript">
-    $('.refresh-recaptcha').on('click', function () {
-        let url = "{{ route('admin.auth.default-captcha',':tmp') }}";
-        document.getElementById('default_recaptcha_id').src = url.replace(':tmp', Math.random());
+    $('#login-form').on('submit', function () {
+        $('#signInBtn').prop('disabled', true);
+        $('#signInBtnSpinner').removeClass('d-none');
     });
 </script>
 

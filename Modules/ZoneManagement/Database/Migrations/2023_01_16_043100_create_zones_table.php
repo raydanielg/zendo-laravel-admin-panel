@@ -25,7 +25,6 @@ class CreateZonesTable extends Migration
 
         if (DB::getDriverName() === 'mysql') {
             DB::statement('ALTER TABLE `zones` MODIFY `coordinates` POLYGON NULL');
-            DB::statement('ALTER TABLE `zones` ADD SPATIAL INDEX `zones_coordinates_spatial_index` (`coordinates`)');
         }
     }
 

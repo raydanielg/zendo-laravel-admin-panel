@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Modules\BusinessManagement\Service\Interfaces\ExternalConfigurationServiceInterface;
+use Modules\UserManagement\Entities\User;
 use Modules\UserManagement\Service\Interfaces\EmployeeServiceInterface;
 
 class LoginController extends BaseController
@@ -39,7 +40,8 @@ class LoginController extends BaseController
 
     public function loginView(): Renderable
     {
-        return view('authmanagement::login');
+        $registered_users_count = User::query()->whereIn('user_type', ['customer', 'driver'])->count();
+        return view('authmanagement::login', compact('registered_users_count'));
     }
 
     public function login(Request $request)

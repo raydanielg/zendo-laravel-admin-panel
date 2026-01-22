@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 class CreateTripRoutesTable extends Migration
 {
@@ -16,9 +17,13 @@ class CreateTripRoutesTable extends Migration
         Schema::create('trip_routes', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('trip_request_id');
-            $table->point('coordinates');
+            $table->text('coordinates');
             $table->timestamps();
         });
+
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('ALTER TABLE `trip_routes` MODIFY `coordinates` POINT NOT NULL');
+        }
     }
 
     /**

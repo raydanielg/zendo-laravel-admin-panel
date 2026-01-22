@@ -24,10 +24,6 @@
                             <i class="bi bi-house-door-fill"></i>
                         </a>
                     </li>
-                    <li>
-                        <span
-                            class="badge badge-primary fs-12">{{ translate('app_version')}} <span>{{env('SOFTWARE_VERSION')}}</span></span>
-                    </li>
                 </ul>
             </div>
         </div>

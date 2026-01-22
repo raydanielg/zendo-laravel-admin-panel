@@ -52,7 +52,8 @@ class PaymentConfigController extends BaseController
         $dataValues = $dataValues
             ->sortBy(function ($item) use ($preferred) {
                 $pos = array_search($item->key_name, $preferred, true);
-                return $pos === false ? (1000 + $item->key_name) : $pos;
+                $order = $pos === false ? 1000 : $pos;
+                return sprintf('%04d_%s', $order, (string)$item->key_name);
             })
             ->values();
         return view('businessmanagement::admin.configuration.payment-methods', compact('dataValues'));

@@ -50,6 +50,12 @@
                             <button type="{{ env('APP_MODE') != 'demo' ? 'submit' : 'button' }}" class="btn btn-primary call-demo" tabindex="3">{{translate('save')}}</button>
                         </div>
                     </form>
+
+                    <div class="mt-4">
+                        <h6 class="mb-2">{{ translate('map_preview') }}</h6>
+                        <div id="gm_preview_notice" class="text-muted mb-2" style="font-size: 13px;"></div>
+                        <div id="gm_preview" style="width: 100%; height: 360px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(0,0,0,.08);"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,6 +81,139 @@
                 e.preventDefault();
             }
         });
+
+        (function () {
+            const notice = document.getElementById('gm_preview_notice');
+            const mapEl = document.getElementById('gm_preview');
+            const keyInput = document.getElementById('map_api_key');
+
+            let map = null;
+            let marker = null;
+            let scriptLoadedForKey = null;
+
+            function setNotice(message) {
+                if (notice) {
+                    notice.textContent = message || '';
+                }
+            }
+
+            function loadGoogleMapsScript(apiKey) {
+                return new Promise(function (resolve, reject) {
+                    if (!apiKey) {
+                        reject(new Error('Missing API key'));
+                        return;
+                    }
+
+                    if (window.google && window.google.maps && scriptLoadedForKey === apiKey) {
+                        resolve();
+                        return;
+                    }
+
+                    if (document.getElementById('gmaps_script')) {
+                        document.getElementById('gmaps_script').remove();
+                    }
+                    delete window.google;
+
+                    const script = document.createElement('script');
+                    script.id = 'gmaps_script';
+                    script.async = true;
+                    script.defer = true;
+                    script.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(apiKey);
+                    script.onload = function () {
+                        scriptLoadedForKey = apiKey;
+                        resolve();
+                    };
+                    script.onerror = function () {
+                        reject(new Error('Failed to load Google Maps'));
+                    };
+                    document.head.appendChild(script);
+                });
+            }
+
+            function initMapAt(lat, lng) {
+                if (!mapEl || !(window.google && window.google.maps)) {
+                    return;
+                }
+
+                const pos = { lat: lat, lng: lng };
+
+                if (!map) {
+                    map = new google.maps.Map(mapEl, {
+                        center: pos,
+                        zoom: 15,
+                        mapTypeControl: false,
+                        streetViewControl: false,
+                        fullscreenControl: true,
+                    });
+                } else {
+                    map.setCenter(pos);
+                }
+
+                if (!marker) {
+                    marker = new google.maps.Marker({
+                        position: pos,
+                        map: map,
+                    });
+                } else {
+                    marker.setPosition(pos);
+                    marker.setMap(map);
+                }
+            }
+
+            function requestDeviceLocation() {
+                if (!navigator.geolocation) {
+                    setNotice('Geolocation is not supported by this browser.');
+                    initMapAt(-6.7924, 39.2083);
+                    return;
+                }
+
+                setNotice('Detecting your current location...');
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        setNotice('Showing your current location.');
+                        initMapAt(position.coords.latitude, position.coords.longitude);
+                    },
+                    function () {
+                        setNotice('Location permission denied. Showing default location.');
+                        initMapAt(-6.7924, 39.2083);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0,
+                    }
+                );
+            }
+
+            function boot() {
+                const apiKey = (keyInput && keyInput.value) ? keyInput.value.trim() : '';
+
+                if (!apiKey) {
+                    setNotice('Add a valid client key to preview the map.');
+                    return;
+                }
+
+                setNotice('Loading map preview...');
+                loadGoogleMapsScript(apiKey)
+                    .then(function () {
+                        requestDeviceLocation();
+                    })
+                    .catch(function (err) {
+                        setNotice((err && err.message) ? err.message : 'Unable to load map.');
+                    });
+            }
+
+            if (keyInput) {
+                keyInput.addEventListener('change', function () {
+                    map = null;
+                    marker = null;
+                    scriptLoadedForKey = null;
+                    boot();
+                });
+            }
+
+            boot();
+        })();
     </script>
 
 @endpush

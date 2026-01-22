@@ -82,13 +82,13 @@
                                             <div class="col-md-3 pe-0">
                                                 <select name="phone-number" id="phone-number" class="form-control">
                                                     @foreach(TELEPHONE_CODES as $item)
-                                                        <option value="{{$item['code']}}">{{$item['name']}}</option>
+                                                        <option value="{{$item['code']}}" @if($item['code']=='+255' || str_contains(strtolower($item['name']), 'tanzania')) selected @endif>{{$item['name']}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-9 ps-0">
                                                 <input type="tel" pattern="[0-9]{1,14}" id="phone" class="form-control" name="phone" required
-                                                       placeholder="Ex: 9837530836">
+                                                       placeholder="Ex: 742710054">
                                             </div>
                                         </div>
 

@@ -47,15 +47,51 @@ class PaymentConfigSetupStoreOrUpdateRequest extends FormRequest
         }
 
         return [
-            'gateway' => 'required|in:ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,cash_after_service,digital_payment,momo',
+            'gateway' => 'required|in:zenopay,pesapal,seclome,ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,cash_after_service,digital_payment,momo',
             'mode' => 'required|in:live,test',
             'gateway_image' => 'nullable|mimes:png|max:' . convertBytesToKiloBytes(maxUploadSize('image')),
             'gateway_title' => Rule::requiredIf(function () {
                 return $this->input('status') == 1;
             }),
             'status' => [
-                'required_if:gateway,ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,cash_after_service,digital_payment,momo',
+                'required_if:gateway,zenopay,pesapal,seclome,ssl_commerz,sixcash,worldpay,payfast,swish,esewa,maxicash,hubtel,viva_wallet,tap,thawani,moncash,pvit,ccavenue,foloosi,iyzi_pay,xendit,fatoorah,hyper_pay,amazon_pay,paypal,stripe,razor_pay,senang_pay,paytabs,paystack,paymob_accept,paytm,flutterwave,liqpay,bkash,mercadopago,cash_after_service,digital_payment,momo',
                 Rule::in([1, 0])
+            ],
+
+            #zenopay
+            'account_id' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'zenopay');
+                })
+            ],
+            'api_secret' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'zenopay');
+                })
+            ],
+
+            #pesapal
+            'consumer_key' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'pesapal');
+                })
+            ],
+            'consumer_secret' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'pesapal');
+                })
+            ],
+
+            #seclome
+            'client_id' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'seclome');
+                })
+            ],
+            'client_secret' => [
+                Rule::requiredIf(function () {
+                    return ($this->input('status') == 1 && $this->input('gateway') == 'seclome');
+                })
             ],
             #SSl_Commerz
             'store_id' => [

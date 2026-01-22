@@ -11,6 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use Modules\BusinessManagement\Http\Requests\PaymentConfigSetupStoreOrUpdateRequest;
 use Modules\BusinessManagement\Service\Interfaces\SettingServiceInterface;
+use Modules\Gateways\Entities\Setting;
 use Modules\Gateways\Traits\Processor;
 
 class PaymentConfigController extends BaseController
@@ -32,8 +33,59 @@ class PaymentConfigController extends BaseController
 
     public function paymentConfigGet()
     {
+        $this->ensureDefaultGatewayExists(
+            key: 'zenopay',
+            keys: ['gateway', 'mode', 'status', 'account_id', 'api_secret'],
+        );
+        $this->ensureDefaultGatewayExists(
+            key: 'pesapal',
+            keys: ['gateway', 'mode', 'status', 'consumer_key', 'consumer_secret'],
+        );
+        $this->ensureDefaultGatewayExists(
+            key: 'seclome',
+            keys: ['gateway', 'mode', 'status', 'client_id', 'client_secret'],
+        );
+
         $dataValues = $this->settingService->getBy(criteria: ['settings_type' => PAYMENT_CONFIG]);
+
+        $preferred = ['zenopay', 'pesapal', 'seclome'];
+        $dataValues = $dataValues
+            ->sortBy(function ($item) use ($preferred) {
+                $pos = array_search($item->key_name, $preferred, true);
+                return $pos === false ? (1000 + $item->key_name) : $pos;
+            })
+            ->values();
         return view('businessmanagement::admin.configuration.payment-methods', compact('dataValues'));
+    }
+
+    private function ensureDefaultGatewayExists(string $key, array $keys): void
+    {
+        $exists = Setting::query()
+            ->where('settings_type', PAYMENT_CONFIG)
+            ->where('key_name', $key)
+            ->exists();
+
+        if ($exists) {
+            return;
+        }
+
+        $default = [];
+        foreach ($keys as $k) {
+            $default[$k] = '';
+        }
+        $default['gateway'] = $key;
+        $default['mode'] = 'test';
+        $default['status'] = '0';
+
+        Setting::query()->create([
+            'key_name' => $key,
+            'live_values' => $default,
+            'test_values' => $default,
+            'settings_type' => PAYMENT_CONFIG,
+            'mode' => 'test',
+            'is_active' => 0,
+            'additional_data' => null,
+        ]);
     }
 
 

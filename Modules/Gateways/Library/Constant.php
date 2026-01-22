@@ -2,6 +2,9 @@
 
 //payment methods
 const PAYMENT_METHODS = [
+    ['key' => 'zenopay', 'value' => 'Zenopay'],
+    ['key' => 'pesapal', 'value' => 'Pesapal'],
+    ['key' => 'seclome', 'value' => 'Seclome'],
     ['key' => 'ssl_commerz', 'value' => 'SSLCOMMERZ'],
     ['key' => 'stripe', 'value' => 'Stripe'],
     ['key' => 'paypal', 'value' => 'PayPal'],

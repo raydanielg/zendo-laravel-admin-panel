@@ -2,6 +2,46 @@
 
 Zendo is a Laravel-based system for ride and parcel operations.
 
+<p align="center">
+  <a href="https://github.com/raydanielg/zendo-laravel-admin-panel">
+    <img alt="Zendo" src="https://readme-typing-svg.demolab.com?font=Inter&weight=700&size=28&duration=2800&pause=700&color=0EA5E9&center=true&vCenter=true&width=700&lines=Zendo+%E2%80%94+Ride+%26+Parcel+Platform;Laravel+12+%2B+Modular+Architecture;Admin+Panel+%2B+REST+API" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/raydanielg/zendo-laravel-admin-panel">
+    <img alt="License" src="https://img.shields.io/badge/License-MIT-0EA5E9?style=for-the-badge" />
+  </a>
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-8.2%2B-0B5FFF?style=for-the-badge" />
+  <img alt="Laravel" src="https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge" />
+  <img alt="Modules" src="https://img.shields.io/badge/Architecture-Modular-22C55E?style=for-the-badge" />
+</p>
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Mobile Apps](#mobile-apps)
+- [Front-end (Landing Page)](#front-end-landing-page)
+- [API (Backend) Overview](#api-backend-overview)
+- [Requirements](#requirements)
+- [Quick Start (Local)](#quick-start-local)
+- [Web Installer](#web-installer)
+- [Developer Details](#developer-details)
+- [Support](#support)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Overview
+
+Zendo is a Laravel-based system for **ride-hailing** and **parcel delivery** operations, built with a modular structure (`nwidart/laravel-modules`) and a REST-style API.
+
+## Mobile Apps
+
+- **Driver App**: https://github.com/REPLACE_WITH_DRIVER_APP_REPO
+- **Customer App**: Coming Soon
+
 ## Front-end (Landing Page)
 
 The public website/landing pages are served via `routes/web.php` using `App\\Http\\Controllers\\LandingPageController`.
@@ -129,6 +169,18 @@ Notes:
 
 For installation or configuration support, contact the developer using the details above.
 
+## Contributing
+
+Contributions are welcome.
+
+1. Fork this repository
+2. Create a feature branch
+3. Make changes with clear commits
+4. Open a Pull Request with:
+   - What changed
+   - Why it changed
+   - Steps to test
+
 ## License
 
-If you plan to distribute or sell this project, add a license that matches your intended usage (for example: MIT, Apache-2.0, or a commercial license). If you already have a license file, document it here.
+This project is licensed under the MIT License. See [`LICENSE`](./LICENSE).
